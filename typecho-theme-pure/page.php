@@ -24,6 +24,9 @@ switch ($template) {
     case 'categories':
         $this->need('page-categories.php');
         break;
+    case 'tags':
+        $this->need('page-tags.php');
+        break;
     default:
         // 默认页面模板
         $this->need('header.php');

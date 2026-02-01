@@ -243,7 +243,7 @@ function themeConfig($form) {
         'showDonate',
         array('1' => '显示', '0' => '隐藏'),
         '0',
-        _t('显���打赏'),
+        _t('显�����打赏'),
         _t('是否在文章末尾显示打赏按钮')
     );
     $form->addInput($showDonate);
@@ -309,15 +309,16 @@ function themeConfig($form) {
  * 文章自定义字段
  */
 function themeFields($layout) {
-    $template = new Typecho_Widget_Helper_Form_Element_Select(
-        'template',
-        array(
-            '' => '默认模板',
-            'about' => '关于页面',
-            'links' => '友链页面',
-            'archives' => '归档页面',
-            'categories' => '分类页面'
-        ),
+$template = new Typecho_Widget_Helper_Form_Element_Select(
+  'template',
+  array(
+  '' => '默认模板',
+  'about' => '关于页面',
+  'links' => '友链页面',
+  'archives' => '归档页面',
+  'categories' => '分类页面',
+  'tags' => '标签页面'
+  ),
         '',
         _t('页面模板'),
         _t('选择页面使用的模板')

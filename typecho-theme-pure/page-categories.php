@@ -32,15 +32,15 @@ function getCategoryPosts($mid) {
 ?>
 
 <main class="main" role="main">
-    <article class="article article-categories article-type-list" itemscope="">
+    <article class="article article-categories" itemscope="">
         <header class="article-header">
-            <h1 itemprop="name" class="hidden-xs"><?php $this->title() ?></h1>
-            <p class="text-muted hidden-xs">共 <?php echo $totalCategories; ?> 个分类</p>
-            <nav role="navigation" id="nav-main" class="okayNav">
-                <ul>
-                    <li><a href="<?php $this->options->siteUrl(); ?>categories">All</a></li>
+            <h1 class="article-title" itemprop="name"><?php $this->title() ?></h1>
+            <p class="article-desc">共 <?php echo $totalCategories; ?> 个分类</p>
+            <nav class="category-nav" role="navigation">
+                <ul class="category-tabs">
+                    <li class="active"><a href="javascript:void(0);" onclick="showAllCategories()">All</a></li>
                     <?php foreach ($categories as $category): ?>
-                    <li><a href="<?php echo Typecho_Router::url('category', array('slug' => $category['slug']), Helper::options()->index); ?>"><?php echo htmlspecialchars($category['name']); ?></a></li>
+                    <li><a href="#category-<?php echo $category['slug']; ?>"><?php echo htmlspecialchars($category['name']); ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </nav>
@@ -49,43 +49,67 @@ function getCategoryPosts($mid) {
             <?php foreach ($categories as $category): ?>
             <?php $categoryPosts = getCategoryPosts($category['mid']); ?>
             <?php if (count($categoryPosts) > 0): ?>
-            <div class="panel panel-default b-no">
-                <div class="panel-heading" role="tab">
-                    <h3 class="panel-title">
-                        <a data-toggle="collapse" href="#collapse<?php echo $category['slug']; ?>" aria-expanded="true">
-                            <i class="icon icon-folder text-active"></i>
-                            <i class="icon icon-folder-open text"></i>
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </a>
-                        <small class="text-muted">(Total <?php echo count($categoryPosts); ?> articles)</small>
+            <section class="category-section" id="category-<?php echo $category['slug']; ?>">
+                <header class="category-section-header">
+                    <h3 class="category-section-title">
+                        <i class="icon icon-folder"></i>
+                        <?php echo htmlspecialchars($category['name']); ?>
                     </h3>
+                    <span class="category-section-count">(Total <?php echo count($categoryPosts); ?> articles)</span>
+                </header>
+                <div class="category-post-list">
+                    <?php foreach ($categoryPosts as $post): ?>
+                    <?php 
+                    $routeExists = (NULL != Typecho_Router::get('post'));
+                    $permalink = $routeExists 
+                        ? Typecho_Router::url('post', array('cid' => $post['cid']), Helper::options()->index)
+                        : Helper::options()->siteUrl . '?p=' . $post['cid'];
+                    ?>
+                    <a href="<?php echo $permalink; ?>" class="collection-item">
+                        <time datetime="<?php echo date('c', $post['created']); ?>">
+                            <?php echo date('Y-m-d', $post['created']); ?>
+                        </time>
+                        <span class="collection-title"><?php echo htmlspecialchars($post['title']); ?></span>
+                    </a>
+                    <?php endforeach; ?>
                 </div>
-                <div id="collapse<?php echo $category['slug']; ?>" class="panel-collapse collapse in" role="tabpanel">
-                    <div class="panel-body">
-                        <div class="collection">
-                            <?php foreach ($categoryPosts as $post): ?>
-                            <?php 
-                            $routeExists = (NULL != Typecho_Router::get('post'));
-                            $permalink = $routeExists 
-                                ? Typecho_Router::url('post', array('cid' => $post['cid']), Helper::options()->index)
-                                : Helper::options()->siteUrl . '?p=' . $post['cid'];
-                            ?>
-                            <a href="<?php echo $permalink; ?>" class="collection-item" itemprop="url">
-                                <time datetime="<?php echo date('c', $post['created']); ?>" itemprop="datePublished">
-                                    <?php echo date('Y-m-d', $post['created']); ?>
-                                </time>
-                                <span>&nbsp;&nbsp;&nbsp;</span>
-                                <?php echo htmlspecialchars($post['title']); ?>
-                            </a>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </section>
             <?php endif; ?>
             <?php endforeach; ?>
         </div>
     </article>
 </main>
+
+<script>
+function showAllCategories() {
+    var sections = document.querySelectorAll('.category-section');
+    sections.forEach(function(section) {
+        section.style.display = 'block';
+    });
+}
+
+// 分类标签页切换
+document.querySelectorAll('.category-tabs a[href^="#"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var targetId = this.getAttribute('href').substring(1);
+        var sections = document.querySelectorAll('.category-section');
+        
+        sections.forEach(function(section) {
+            if (section.id === targetId) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+        
+        // 更新活动状态
+        document.querySelectorAll('.category-tabs li').forEach(function(li) {
+            li.classList.remove('active');
+        });
+        this.parentElement.classList.add('active');
+    });
+});
+</script>
 
 <?php $this->need('footer.php'); ?>
