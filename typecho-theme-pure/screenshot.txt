@@ -1,0 +1,8 @@
+Typecho Pure Theme Screenshot
+=============================
+
+请将 screenshot.png 文件放在此目录下作为主题预览图。
+
+推荐尺寸：600 x 400 像素
+
+可以从原 hexo-theme-pure 的 screenshot 目录中获取截图。
