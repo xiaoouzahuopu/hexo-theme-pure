@@ -54,9 +54,10 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
     </footer>
     
     <!-- JavaScript -->
-    <script src="<?php $this->options->themeUrl('assets/js/jquery.min.js'); ?>"></script>
-    <script src="<?php $this->options->themeUrl('assets/js/plugin.min.js'); ?>"></script>
-    <script src="<?php $this->options->themeUrl('assets/js/application.js'); ?>"></script>
+    <?php $themeUrl = Helper::options()->themeUrl; ?>
+    <script src="<?php echo $themeUrl; ?>/assets/js/jquery.min.js"></script>
+    <script src="<?php echo $themeUrl; ?>/assets/js/plugin.min.js"></script>
+    <script src="<?php echo $themeUrl; ?>/assets/js/application.js"></script>
     
     <!-- 页脚代码 -->
     <?php $this->footer(); ?>
