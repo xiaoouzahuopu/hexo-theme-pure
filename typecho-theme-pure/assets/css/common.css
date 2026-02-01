@@ -84,20 +84,28 @@
 
 .pagination-links {
     display: flex;
-    gap: 20px;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-arrow {
+    color: #2196f3;
+    font-size: 14px;
 }
 
 .page-nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    color: #666;
+    color: #2196f3;
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s ease;
 }
 
-.page-nav-link:hover {
+.page-nav-link.disabled {
+    color: #ccc;
+    cursor: default;
+}
+
+.page-nav-link:hover:not(.disabled) {
     color: #2196f3;
 }
 
@@ -170,22 +178,20 @@
 .widget-archive .archive-item {
     display: flex;
     align-items: center;
-    padding: 6px 0;
+    padding: 5px 0;
+    line-height: 1.6;
 }
 
-.widget-archive .archive-bullet {
-    width: 6px;
-    height: 6px;
-    background: #ddd;
-    border-radius: 50%;
-    margin-right: 10px;
-    flex-shrink: 0;
+.widget-archive .archive-item::before {
+    content: "•";
+    color: #333;
+    margin-right: 8px;
+    font-size: 12px;
 }
 
 .widget-archive .archive-link {
     color: #2196f3;
     text-decoration: none;
-    flex: 1;
 }
 
 .widget-archive .archive-link:hover {
@@ -194,8 +200,8 @@
 
 .widget-archive .archive-count {
     color: #999;
-    font-size: 12px;
-    margin-left: 5px;
+    font-size: 13px;
+    margin-left: 3px;
 }
 
 /* 最新文章样式 */

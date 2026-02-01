@@ -432,6 +432,61 @@ class Pure_Utils {
     }
     
     /**
+     * 获取文章浏览量
+     */
+    public static function getViews($archive) {
+        $cid = $archive->cid;
+        $db = Typecho_Db::get();
+        $prefix = $db->getPrefix();
+        
+        // 尝试从fields中获取views
+        $row = $db->fetchRow($db->select('str_value')
+            ->from('table.fields')
+            ->where('cid = ?', $cid)
+            ->where('name = ?', 'views'));
+        
+        if ($row) {
+            return intval($row['str_value']);
+        }
+        
+        // 如果没有views字段，返回评论数作为替代
+        return $archive->commentsNum;
+    }
+    
+    /**
+     * 增加文章浏览量
+     */
+    public static function addViews($archive) {
+        $cid = $archive->cid;
+        $db = Typecho_Db::get();
+        
+        // 检查是否存在views字段
+        $row = $db->fetchRow($db->select('str_value')
+            ->from('table.fields')
+            ->where('cid = ?', $cid)
+            ->where('name = ?', 'views'));
+        
+        if ($row) {
+            // 更新
+            $db->query($db->update('table.fields')
+                ->rows(array('str_value' => intval($row['str_value']) + 1))
+                ->where('cid = ?', $cid)
+                ->where('name = ?', 'views'));
+        } else {
+            // 插入
+            $db->query($db->insert('table.fields')
+                ->rows(array(
+                    'cid' => $cid,
+                    'name' => 'views',
+                    'type' => 'str',
+                    'str_value' => '1',
+                    'int_value' => 0,
+                    'float_value' => 0
+                )));
+        }
+    }
+    
+    /**
      * 生成文章目录
      */
     public static function getToc($content) {
@@ -488,7 +543,7 @@ class Pure_Utils {
     }
     
     /**
-     * 为代码块添加高亮样式包装
+     * 为代码块添加高亮样式包��
      */
     public static function wrapCodeBlocks($content) {
         // 将 <pre><code> 包装成带有终端样式的 highlight 结构

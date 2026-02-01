@@ -37,7 +37,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
         <?php endif; ?>
         
         <!-- 归档 -->
-        <?php $this->widget('Widget_Contents_Post_Date', 'type=month&format=n 月 Y')->to($archives); ?>
+        <?php $this->widget('Widget_Contents_Post_Date', 'type=month&format=n月 Y')->to($archives); ?>
         <?php if ($archives->have()): ?>
         <section class="widget widget-archive">
             <h3 class="widget-title">归档</h3>
@@ -45,7 +45,6 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
                 <ul class="archive-list">
                     <?php while ($archives->next()): ?>
                     <li class="archive-item">
-                        <span class="archive-bullet"></span>
                         <a href="<?php $archives->permalink(); ?>" class="archive-link">
                             <?php $archives->date(); ?>
                         </a>

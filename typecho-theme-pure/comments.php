@@ -14,14 +14,6 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
     <!-- 评论表单 -->
     <div class="respond" id="<?php $this->respondId(); ?>">
         <div class="comment-form-container">
-            <!-- 站点信息提示 -->
-            <div class="comment-site-info">
-                <p>名称：<?php $this->options->title() ?></p>
-                <p>头像：<?php echo $this->options->profileAvatar ? $this->options->profileAvatar : $this->options->themeUrl('assets/images/avatar.jpg'); ?></p>
-                <p>链接：<?php $this->options->siteUrl(); ?></p>
-                <p>介绍：<?php $this->options->description() ?></p>
-            </div>
-            
             <form method="post" action="<?php $this->commentUrl() ?>" id="comment-form" class="comment-form" role="form">
                 <?php if($this->user->hasLogin()): ?>
                 <p class="logged-in-as">
@@ -54,6 +46,13 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
     <?php if ($comments->have()): ?>
     <div class="comment-list-container">
         <h3 class="comment-title"><?php $this->commentsNum('%d 评论'); ?></h3>
+    <?php else: ?>
+    <div class="comment-empty">
+        <p>来发评论吧~~</p>
+    </div>
+    <?php endif; ?>
+    
+    <?php if ($comments->have()): ?>
         
         <div class="comment-list">
             <?php while($comments->next()): ?>

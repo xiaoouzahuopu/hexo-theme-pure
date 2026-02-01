@@ -43,50 +43,44 @@ $this->need('header.php');
                     <?php $this->tags(', ', true, 'none'); ?>
                 </span>
                 <?php endif; ?>
+                <span class="article-views">
+                    <i class="icon icon-eye"></i>
+                    <?php echo Pure_Utils::getViews($this); ?>
+                </span>
                 <span class="article-comment">
                     <i class="icon icon-comment"></i>
-                    <a href="<?php $this->permalink() ?>#comments"><?php $this->commentsNum('评论', '1 条评论', '%d 条评论'); ?></a>
+                    <?php $this->commentsNum('评论', '评论', '评论'); ?>
                 </span>
-                <?php if ($this->options->showWordCount): ?>
-                <span class="article-wordcount">
-                    <i class="icon icon-file-text"></i>
-                    字数统计: <?php echo Pure_Utils::getWordCount($this->content); ?>字
-                </span>
-                <span class="article-readtime">
-                    <i class="icon icon-clock"></i>
-                    阅读时长: <?php echo Pure_Utils::getReadTime($this->content); ?>分
-                </span>
-                <?php endif; ?>
             </div>
         </article>
         <?php endwhile; ?>
     </div>
     
     <!-- 分页导航 -->
-    <?php if ($this->_currentPage > 1 || $this->have()): ?>
-    <nav class="pagination-nav clearfix">
+    <?php 
+    $db = Typecho_Db::get();
+    $totalPosts = $db->fetchObject($db->select(array('COUNT(cid)' => 'num'))->from('table.contents')
+        ->where('type = ?', 'post')
+        ->where('status = ?', 'publish'))->num;
+    $pageSize = $this->options->pageSize;
+    $totalPages = ceil($totalPosts / $pageSize);
+    ?>
+    <?php if ($totalPages > 1): ?>
+    <nav class="pagination-nav">
         <div class="pagination-links">
+            <span class="page-arrow">&lt;</span>
             <?php if ($this->_currentPage > 1): ?>
-            <a href="<?php echo $this->pageLink($this->_currentPage - 1); ?>" class="page-nav-link prev">
-                <i class="icon icon-angle-left"></i> 上一页
-            </a>
+            <a href="<?php echo $this->pageLink($this->_currentPage - 1); ?>" class="page-nav-link">上一页</a>
+            <?php else: ?>
+            <span class="page-nav-link disabled">上一页</span>
             <?php endif; ?>
-            
-            <?php 
-            // 检查是否有下一页
-            $db = Typecho_Db::get();
-            $totalPosts = $db->fetchObject($db->select(array('COUNT(cid)' => 'num'))->from('table.contents')
-                ->where('type = ?', 'post')
-                ->where('status = ?', 'publish'))->num;
-            $pageSize = $this->options->pageSize;
-            $totalPages = ceil($totalPosts / $pageSize);
-            ?>
             
             <?php if ($this->_currentPage < $totalPages): ?>
-            <a href="<?php echo $this->pageLink($this->_currentPage + 1); ?>" class="page-nav-link next">
-                下一页 <i class="icon icon-angle-right"></i>
-            </a>
+            <a href="<?php echo $this->pageLink($this->_currentPage + 1); ?>" class="page-nav-link">下一页</a>
+            <?php else: ?>
+            <span class="page-nav-link disabled">下一页</span>
             <?php endif; ?>
+            <span class="page-arrow">&gt;</span>
         </div>
         <div class="pagination-info">
             Page <?php echo $this->_currentPage; ?> of <?php echo $totalPages; ?>
