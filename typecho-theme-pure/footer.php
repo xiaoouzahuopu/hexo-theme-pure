@@ -8,6 +8,17 @@
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 ?>
     
+    <!-- 页脚样式 -->
+    <style>
+    .footer { margin-top: 50px; padding: 30px 20px; text-align: center; font-size: 13px; color: #999; border-top: 1px solid #eee; }
+    .footer .social-links { list-style: none; padding: 0; margin: 0 0 15px 0; display: flex; justify-content: center; gap: 15px; }
+    .footer .social-links a { color: #666; }
+    .footer .social-links a:hover { color: #2196f3; }
+    .footer .copyright { line-height: 1.8; }
+    .footer .copyright a { color: #2196f3; }
+    .footer .publishby, .footer .icp { margin-top: 5px; }
+    </style>
+    
     <!-- 页脚 -->
     <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
         <!-- 社交链接 -->

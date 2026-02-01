@@ -81,7 +81,7 @@ $content = Pure_Utils::wrapCodeBlocks($content);
     <!-- 上下篇导航和分享 -->
     <nav class="article-nav-bottom">
         <div class="nav-prev-next">
-            <?php $this->thePrev('<a href="%s" class="nav-link nav-prev"><i class="icon icon-angle-left"></i> 上一篇</a>', ''); ?>
+            <?php $this->thePrev('&lt; 上一篇', '', array('tagClass' => 'nav-link')); ?>
         </div>
         <div class="nav-share">
             <a href="javascript:void(0);" class="share-btn" onclick="window.open('http://service.weibo.com/share/share.php?url=<?php echo urlencode($this->permalink); ?>&title=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="微博">

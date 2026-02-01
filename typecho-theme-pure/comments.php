@@ -46,13 +46,6 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
     <?php if ($comments->have()): ?>
     <div class="comment-list-container">
         <h3 class="comment-title"><?php $this->commentsNum('%d 评论'); ?></h3>
-    <?php else: ?>
-    <div class="comment-empty">
-        <p>来发评论吧~~</p>
-    </div>
-    <?php endif; ?>
-    
-    <?php if ($comments->have()): ?>
         
         <div class="comment-list">
             <?php while($comments->next()): ?>
@@ -96,6 +89,10 @@ if (!defined('__TYPECHO_ROOT_DIR__')) exit;
             <?php $comments->pageNav('&laquo; 前一页', '后一页 &raquo;'); ?>
             <span class="comment-page-info">Powered By <a href="http://typecho.org" target="_blank" rel="noopener">typecho</a></span>
         </div>
+    </div>
+    <?php else: ?>
+    <div class="comment-empty">
+        <p>来发评论吧~~</p>
     </div>
     <?php endif; ?>
     

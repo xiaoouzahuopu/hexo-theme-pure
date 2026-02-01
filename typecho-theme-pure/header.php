@@ -78,72 +78,119 @@ if ($this->is('page') && $this->fields->template == 'about') {
     <!-- 关键内联样式 -->
     <style type="text/css">
     /* 基础布局 */
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 0; background: #fff; }
     .main { max-width: 800px; margin: 0 auto; padding: 20px; }
-    .content { background: #fff; }
+    .content { background: #fff; padding: 20px 0; }
+    a { color: #2196f3; text-decoration: none; }
+    a:hover { text-decoration: underline; }
     
     /* 文章样式 */
+    .article { background: #fff; }
     .article-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
     .article-title { font-size: 1.8em; font-weight: 600; color: #333; line-height: 1.4; margin: 0 0 15px 0; }
     .article-meta { font-size: 13px; color: #999; line-height: 2; }
-    .article-meta span { margin-right: 15px; display: inline-block; }
+    .article-meta span { margin-right: 15px; display: inline-flex; align-items: center; gap: 5px; }
     .article-meta a { color: #2196f3; text-decoration: none; }
+    .article-meta .icon { font-size: 14px; }
     
     /* 文章内容 */
-    .article-entry { line-height: 1.8; font-size: 15px; }
+    .article-entry { line-height: 1.8; font-size: 15px; color: #333; }
     .article-entry p { margin: 15px 0; }
-    .article-entry img { max-width: 100%; height: auto; }
-    .article-entry pre { background: #fafafa; padding: 15px; overflow: auto; border-radius: 4px; font-size: 13px; margin: 15px 0; }
-    .article-entry code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; color: #c7254e; }
-    .article-entry pre code { background: none; padding: 0; color: inherit; }
-    .article-entry ul, .article-entry ol { padding-left: 25px; }
-    .article-entry li { margin: 8px 0; }
+    .article-entry img { max-width: 100%; height: auto; display: block; margin: 15px 0; }
+    .article-entry pre { background: #f8f8f8; padding: 15px; overflow-x: auto; border-radius: 4px; font-size: 13px; margin: 15px 0; border: 1px solid #eee; }
+    .article-entry code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 90%; color: #c7254e; font-family: Consolas, Monaco, "Andale Mono", monospace; }
+    .article-entry pre code { background: none; padding: 0; color: #333; font-size: 13px; }
+    .article-entry ul, .article-entry ol { padding-left: 25px; margin: 15px 0; }
+    .article-entry li { margin: 8px 0; line-height: 1.8; }
     .article-entry blockquote { border-left: 4px solid #ddd; padding-left: 15px; margin: 15px 0; color: #666; }
     .article-entry a { color: #2196f3; text-decoration: none; }
     .article-entry a:hover { text-decoration: underline; }
-    .article-entry h2, .article-entry h3, .article-entry h4 { margin: 25px 0 15px; font-weight: 600; color: #333; }
+    .article-entry h2 { font-size: 1.5em; margin: 30px 0 15px; font-weight: 600; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    .article-entry h3 { font-size: 1.25em; margin: 25px 0 15px; font-weight: 600; color: #333; }
+    .article-entry h4 { font-size: 1.1em; margin: 20px 0 10px; font-weight: 600; color: #333; }
     
     /* 版权信息 */
     .article-copyright { margin: 30px 0; padding: 15px 20px; background: #f5f5f5; border-radius: 4px; font-size: 13px; color: #666; line-height: 1.8; }
     .article-copyright p { margin: 5px 0; }
     .article-copyright a { color: #2196f3; }
+    .article-copyright strong { color: #333; }
     
     /* 底部导航 */
-    .article-nav-bottom { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin: 20px 0; }
-    .nav-link { color: #666; text-decoration: none; font-size: 14px; }
-    .nav-link:hover { color: #2196f3; }
-    .nav-share { display: flex; gap: 12px; }
-    .nav-share .share-btn { color: #999; font-size: 18px; }
-    .nav-share .share-btn:hover { color: #2196f3; }
+    .article-nav-bottom { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin: 20px 0; border-top: 1px solid #eee; }
+    .nav-prev-next { flex: 1; }
+    .nav-link { display: inline-flex; align-items: center; gap: 5px; color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+    .nav-link:hover { color: #2196f3; text-decoration: none; }
+    .nav-share { display: flex; align-items: center; gap: 15px; }
+    .nav-share .share-btn { display: inline-flex; align-items: center; justify-content: center; color: #999; text-decoration: none; transition: color 0.3s; }
+    .nav-share .share-btn:hover { color: #2196f3; text-decoration: none; }
+    .nav-share .share-btn .icon { font-size: 20px; }
     
     /* 评论区 */
     .comment-section { margin-top: 40px; padding-top: 30px; border-top: 1px solid #eee; }
     .comment-form-container { margin-bottom: 30px; }
+    .logged-in-as { font-size: 14px; color: #666; margin-bottom: 15px; }
+    .logged-in-as a { color: #2196f3; }
     .comment-form-header { display: flex; gap: 15px; margin-bottom: 15px; }
-    .comment-form-header input { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
-    .comment-form-body textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical; min-height: 100px; box-sizing: border-box; }
+    .comment-form-header input { flex: 1; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; outline: none; transition: border-color 0.3s; }
+    .comment-form-header input:focus { border-color: #2196f3; }
+    .comment-form-body { margin-bottom: 10px; }
+    .comment-form-body textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical; min-height: 120px; box-sizing: border-box; outline: none; transition: border-color 0.3s; font-family: inherit; }
+    .comment-form-body textarea:focus { border-color: #2196f3; }
     .comment-form-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-    .comment-form-submit { background: #2196f3; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; }
-    .comment-form-submit:hover { background: #1976d2; }
+    .comment-form-tools { display: flex; gap: 10px; }
+    .comment-form-tools .tool-btn { color: #999; cursor: pointer; font-size: 18px; }
+    .comment-form-tools .tool-btn:hover { color: #2196f3; }
+    .comment-form-submit { background: #f5f5f5; color: #333; border: 1px solid #ddd; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+    .comment-form-submit:hover { background: #2196f3; color: #fff; border-color: #2196f3; }
     
     /* 评论列表 */
     .comment-list-container { margin-top: 30px; }
-    .comment-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
-    .comment-item { display: flex; gap: 15px; padding: 20px 0; border-bottom: 1px solid #eee; }
+    .comment-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+    .comment-list { }
+    .comment-item { display: flex; gap: 15px; padding: 20px 0; border-bottom: 1px solid #f0f0f0; }
     .comment-avatar img { width: 48px; height: 48px; border-radius: 50%; }
-    .comment-content { flex: 1; }
-    .comment-header { margin-bottom: 8px; }
-    .comment-author { font-weight: 600; margin-right: 10px; }
+    .comment-content { flex: 1; min-width: 0; }
+    .comment-header { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 5px; }
+    .comment-author { font-weight: 600; }
     .comment-author a { color: #2196f3; text-decoration: none; }
     .comment-meta { color: #999; font-size: 12px; }
     .comment-date { color: #999; font-size: 12px; margin-bottom: 8px; }
-    .comment-body { line-height: 1.6; }
-    .comment-reply a { color: #2196f3; font-size: 13px; }
-    .comment-empty { text-align: center; padding: 40px 0; color: #999; }
+    .comment-body { line-height: 1.6; color: #333; }
+    .comment-body p { margin: 5px 0; }
+    .comment-reply { margin-top: 8px; }
+    .comment-reply a { color: #2196f3; font-size: 13px; text-decoration: none; }
+    .comment-reply a:hover { text-decoration: underline; }
+    .comment-empty { text-align: center; padding: 40px 0; color: #999; font-size: 14px; }
+    .comment-pagination { margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .comment-page-info { color: #999; }
+    .comment-page-info a { color: #f60; }
     
     /* 打赏按钮 */
     .article-donate { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 100; }
-    .donate-btn { width: 50px; height: 50px; line-height: 50px; border-radius: 50%; background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); color: #fff; font-size: 18px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(241, 39, 17, 0.3); }
+    .donate-btn { width: 50px; height: 50px; line-height: 50px; border-radius: 50%; background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); color: #fff; font-size: 18px; font-weight: bold; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(241, 39, 17, 0.3); transition: transform 0.3s, box-shadow 0.3s; }
+    .donate-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(241, 39, 17, 0.4); }
+    .donate-qrcode { position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%); background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .donate-content { display: flex; gap: 20px; }
+    .donate-item { text-align: center; }
+    .donate-item img { width: 150px; height: 150px; }
+    .donate-item p { margin-top: 10px; font-size: 14px; color: #666; }
+    
+    /* Icon 字体占位 - 确保图标显示 */
+    .icon { font-style: normal; }
+    .icon-calendar:before { content: "📅"; }
+    .icon-folder:before { content: "📁"; }
+    .icon-tags:before { content: "🏷"; }
+    .icon-eye:before { content: "👁"; }
+    .icon-comment:before { content: "💬"; }
+    .icon-angle-left:before { content: "<"; }
+    .icon-weibo:before { content: "微"; }
+    .icon-wechat:before { content: "微"; }
+    .icon-qq:before { content: "Q"; }
+    .icon-facebook:before { content: "f"; }
+    .icon-twitter:before { content: "t"; }
+    .icon-smile:before { content: "😊"; }
+    .icon-image:before { content: "🖼"; }
     </style>
     
     <!-- 自定义CSS -->
