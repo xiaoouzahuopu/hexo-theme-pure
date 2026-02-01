@@ -243,7 +243,7 @@ function themeConfig($form) {
         'showDonate',
         array('1' => '显示', '0' => '隐藏'),
         '0',
-        _t('显示打赏'),
+        _t('显���打赏'),
         _t('是否在文章末尾显示打赏按钮')
     );
     $form->addInput($showDonate);
@@ -484,6 +484,90 @@ class Pure_Utils {
             $content
         );
         return $content;
+    }
+    
+    /**
+     * 为代码块添加高亮样式包装
+     */
+    public static function wrapCodeBlocks($content) {
+        // 将 <pre><code> 包装成带有终端样式的 highlight 结构
+        $content = preg_replace_callback(
+            '/<pre([^>]*)><code([^>]*)>(.*?)<\/code><\/pre>/is',
+            function($matches) {
+                $preAttrs = $matches[1];
+                $codeAttrs = $matches[2];
+                $code = $matches[3];
+                
+                // 提取语言类型
+                $lang = '';
+                if (preg_match('/class=["\'].*?language-(\w+).*?["\']/i', $codeAttrs, $langMatch)) {
+                    $lang = $langMatch[1];
+                }
+                
+                return '<figure class="highlight' . ($lang ? ' ' . $lang : '') . '"><table><tbody><tr><td class="code"><pre' . $preAttrs . '><code' . $codeAttrs . '>' . $code . '</code></pre></td></tr></tbody></table></figure>';
+            },
+            $content
+        );
+        return $content;
+    }
+    
+    /**
+     * 生成带编号的文章目录
+     */
+    public static function getTocNumbered($content) {
+        $pattern = '/<h([2-4])[^>]*>(.+?)<\/h\1>/is';
+        $toc = '';
+        
+        if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER)) {
+            $toc .= '<nav id="toc" class="article-toc"><h3 class="toc-title">文章目录</h3><ol class="toc toc-numbered">';
+            
+            $counters = array(0, 0, 0); // h2, h3, h4 计数器
+            $lastLevel = 2;
+            
+            foreach ($matches as $index => $match) {
+                $level = intval($match[1]);
+                $title = strip_tags($match[2]);
+                $anchor = 'toc-' . $index;
+                
+                // 更新计数器
+                $levelIndex = $level - 2;
+                $counters[$levelIndex]++;
+                // 重置更深层级的计数器
+                for ($i = $levelIndex + 1; $i < 3; $i++) {
+                    $counters[$i] = 0;
+                }
+                
+                // 生成编号
+                $number = '';
+                for ($i = 0; $i <= $levelIndex; $i++) {
+                    if ($counters[$i] > 0) {
+                        $number .= $counters[$i] . '.';
+                    }
+                }
+                $number = rtrim($number, '.');
+                
+                if ($level > $lastLevel) {
+                    $toc .= str_repeat('<ol class="toc-child">', $level - $lastLevel);
+                } elseif ($level < $lastLevel) {
+                    $toc .= str_repeat('</li></ol>', $lastLevel - $level);
+                } else if ($index > 0) {
+                    $toc .= '</li>';
+                }
+                
+                $toc .= '<li class="toc-item toc-level-' . $level . '">';
+                $toc .= '<a class="toc-link" href="#' . $anchor . '">';
+                $toc .= '<span class="toc-number">' . $number . '</span> ';
+                $toc .= '<span class="toc-text">' . htmlspecialchars($title) . '</span>';
+                $toc .= '</a>';
+                
+                $lastLevel = $level;
+            }
+            
+            $toc .= str_repeat('</li></ol>', $lastLevel - 1);
+            $toc .= '</nav>';
+        }
+        
+        return $toc;
     }
     
     /**

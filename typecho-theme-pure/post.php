@@ -18,13 +18,16 @@ $content = $this->content;
 if ($showToc) {
     $content = Pure_Utils::addHeadingAnchors($this->content);
 }
+
+// 为代码块添加高亮样式包装
+$content = Pure_Utils::wrapCodeBlocks($content);
 ?>
 
 <?php if ($showToc): ?>
 <!-- 文章目录侧边栏 -->
 <aside class="sidebar sidebar-toc collapse in" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
     <div class="slimContent">
-        <?php echo Pure_Utils::getToc($this->content); ?>
+        <?php echo Pure_Utils::getTocNumbered($this->content); ?>
     </div>
 </aside>
 <?php endif; ?>
@@ -74,67 +77,70 @@ if ($showToc) {
             <?php echo $content; ?>
         </div>
         
+        <!-- 上下篇导航 -->
+        <nav class="article-nav-inline clearfix">
+            <?php $this->thePrev('<span class="nav-prev"><i class="icon icon-angle-left"></i></span>', '', array('title' => '上一篇')); ?>
+            <!-- 分享按钮组 -->
+            <div class="article-share-inline">
+                <a href="javascript:void(0);" class="share-btn share-weibo" onclick="window.open('http://service.weibo.com/share/share.php?url=<?php echo urlencode($this->permalink); ?>&title=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="分享到微博">
+                    <i class="icon icon-weibo"></i>
+                </a>
+                <a href="javascript:void(0);" class="share-btn share-wechat" title="分享到微信">
+                    <i class="icon icon-wechat"></i>
+                </a>
+                <a href="javascript:void(0);" class="share-btn share-qq" onclick="window.open('http://connect.qq.com/widget/shareqq/index.html?url=<?php echo urlencode($this->permalink); ?>&title=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="分享到QQ">
+                    <i class="icon icon-qq"></i>
+                </a>
+                <a href="javascript:void(0);" class="share-btn share-facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($this->permalink); ?>', '_blank', 'width=550,height=370');" title="分享到Facebook">
+                    <i class="icon icon-facebook"></i>
+                </a>
+                <a href="javascript:void(0);" class="share-btn share-twitter" onclick="window.open('https://twitter.com/intent/tweet?url=<?php echo urlencode($this->permalink); ?>&text=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="分享到Twitter">
+                    <i class="icon icon-twitter"></i>
+                </a>
+            </div>
+            <?php $this->theNext('<span class="nav-next"><i class="icon icon-angle-right"></i></span>', '', array('title' => '下一篇')); ?>
+        </nav>
+        
+        <!-- 打赏 -->
+        <?php if ($this->options->showDonate && ($this->options->donateAlipay || $this->options->donateWechat)): ?>
+        <div class="article-donate">
+            <div class="donate-title">
+                <button class="donate-btn" type="button" onclick="toggleDonate()">赏</button>
+            </div>
+            <div class="donate-qrcode" id="donateModal" style="display: none;">
+                <div class="donate-content">
+                    <?php if ($this->options->donateAlipay): ?>
+                    <div class="donate-item">
+                        <img src="<?php $this->options->donateAlipay() ?>" alt="支付宝">
+                        <p>支付宝</p>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($this->options->donateWechat): ?>
+                    <div class="donate-item">
+                        <img src="<?php $this->options->donateWechat() ?>" alt="微信">
+                        <p>微信支付</p>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <script>
+        function toggleDonate() {
+            var modal = document.getElementById('donateModal');
+            modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+        }
+        </script>
+        <?php endif; ?>
+        
         <!-- 文章底部 -->
         <div class="article-footer">
             <!-- 版权信息 -->
             <div class="article-copyright">
-                <p>本文链接：<a href="<?php $this->permalink() ?>"><?php $this->permalink() ?></a></p>
-                <p>版权声明：本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！</p>
+                <p><strong>本文链接：</strong><a href="<?php $this->permalink() ?>"><?php $this->permalink() ?></a></p>
+                <p><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！</p>
             </div>
         </div>
     </article>
-    
-    <!-- 文章导航 -->
-    <nav class="article-nav clearfix">
-        <?php $this->thePrev('<span class="prev"><i class="icon icon-angle-left"></i> %s</span>', '', array('title' => '上一篇')); ?>
-        <?php $this->theNext('<span class="next">%s <i class="icon icon-angle-right"></i></span>', '', array('title' => '下一篇')); ?>
-    </nav>
-    
-    <!-- 打赏 -->
-    <?php if ($this->options->showDonate && ($this->options->donateAlipay || $this->options->donateWechat)): ?>
-    <div class="article-donate">
-        <div class="donate-title">
-            <span class="donate-btn" data-toggle="modal" data-target="#donateModal">赏</span>
-            <p>感谢您的支持，我会继续努力的!</p>
-        </div>
-        <div class="donate-qrcode" id="donateModal">
-            <div class="donate-content">
-                <?php if ($this->options->donateAlipay): ?>
-                <div class="donate-item">
-                    <img src="<?php $this->options->donateAlipay() ?>" alt="支付宝">
-                    <p>支付宝</p>
-                </div>
-                <?php endif; ?>
-                <?php if ($this->options->donateWechat): ?>
-                <div class="donate-item">
-                    <img src="<?php $this->options->donateWechat() ?>" alt="微信">
-                    <p>微信支付</p>
-                </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-    <?php endif; ?>
-    
-    <!-- 分享 -->
-    <div class="article-share">
-        <span class="share-title">分享到</span>
-        <a href="javascript:void(0);" class="share-btn share-weibo" onclick="window.open('http://service.weibo.com/share/share.php?url=<?php echo urlencode($this->permalink); ?>&title=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="分享到微博">
-            <i class="icon icon-weibo"></i>
-        </a>
-        <a href="javascript:void(0);" class="share-btn share-qq" onclick="window.open('http://connect.qq.com/widget/shareqq/index.html?url=<?php echo urlencode($this->permalink); ?>&title=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="分享到QQ">
-            <i class="icon icon-qq"></i>
-        </a>
-        <a href="javascript:void(0);" class="share-btn share-wechat" title="分享到微信">
-            <i class="icon icon-wechat"></i>
-        </a>
-        <a href="javascript:void(0);" class="share-btn share-facebook" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($this->permalink); ?>', '_blank', 'width=550,height=370');" title="分享到Facebook">
-            <i class="icon icon-facebook"></i>
-        </a>
-        <a href="javascript:void(0);" class="share-btn share-twitter" onclick="window.open('https://twitter.com/intent/tweet?url=<?php echo urlencode($this->permalink); ?>&text=<?php echo urlencode($this->title); ?>', '_blank', 'width=550,height=370');" title="分享到Twitter">
-            <i class="icon icon-twitter"></i>
-        </a>
-    </div>
     
     <!-- 评论 -->
     <?php $this->need('comments.php'); ?>

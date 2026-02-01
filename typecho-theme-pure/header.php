@@ -66,6 +66,11 @@ if ($this->is('page') && $this->fields->template == 'about') {
     <!-- 主题样式 -->
     <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/style.css'); ?>">
     
+    <!-- 文章页面样式 -->
+    <?php if ($this->is('post') || $this->is('page')): ?>
+    <link rel="stylesheet" href="<?php $this->options->themeUrl('assets/css/article.css'); ?>">
+    <?php endif; ?>
+    
     <!-- 自定义CSS -->
     <?php if ($this->options->customCss): ?>
     <style type="text/css">
